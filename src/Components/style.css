@@ -1,0 +1,28 @@
+.loginPage {
+    background: url('Images/dr5.jpg');
+    background: linear-gradient(rgba(11, 11, 11, 0.5), rgba(10, 10, 10, 0.5)), url("Images/dr5.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 120%;
+}
+
+.loginForm {
+    background-color: rgba(11, 31, 48, 0.6);
+    color: white;
+}
+
+ul li :hover {
+    background-color: rgb(255, 255, 255);
+}
+
+.employee_image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.emp_det_image {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+}
