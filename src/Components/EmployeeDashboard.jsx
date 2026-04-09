@@ -1,4 +1,3 @@
-// src/Components/EmployeeDashboard.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -39,8 +38,8 @@ const EmployeeDashboard = () => {
 
   return (
    <div className="max-w-lg mx-auto mt-10 p-6 bg-white rounded-2xl shadow-lg">
-      <h2 className="text-2xl font-bold text-center mb-6">
-        Employee Dashboard
+      <h2 className="text-2xl text-center font-bold mb-6 font-serif italic">
+        EmployeeMS
       </h2>
       <div className="space-y-3">
         <p>

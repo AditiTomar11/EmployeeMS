@@ -14,19 +14,19 @@ const Login = () => {
     axios.defaults.withCredentials = true;
     const handleSubmit = (event) => {
         event.preventDefault()
-        axios.post('http://localhost:3000/auth/adminlogin', values)
-        .then(result => {
+        axios.post('http://localhost:5000/auth/adminlogin', values)
+         .then(result => {
             if(result.data.loginStatus) {
-                localStorage.setItem("valid", true)
-                navigate('/dashboard')
+             localStorage.setItem("valid", "true")
+             navigate('/dashboard')
             } else {
-                setError(result.data.Error)
+                alert(result.data.Error)
             }
         })
         .catch(err => console.log(err))
     }
 
-  return (
+    return (
     <div className='d-flex justify-content-center align-items-center vh-100 loginPage'>
         <div className='p-3 rounded w-25 border loginForm'>
             <div className='text-warning'>

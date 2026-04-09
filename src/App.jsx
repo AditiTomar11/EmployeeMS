@@ -1,7 +1,9 @@
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
+
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+
 import Login from './Components/Login'
-import {BrowserRouter, Routes, Route, useNavigate} from 'react-router-dom'
 import Dashboard from './Components/Dashboard'
 import Home from './Components/Home'
 import Employee from './Components/Employee'
@@ -17,26 +19,33 @@ import PrivateRoute from './Components/PrivateRoute'
 
 function App() {
   return (
-    <BrowserRouter>
-    <Routes>
-      <Route path='/' element={<Start />}></Route>
-      <Route path='/adminlogin' element={<Login />}></Route>
-      <Route path='/employee_login' element={<EmployeeLogin />}></Route>
-      <Route path='/employee_detail/:id' element={<EmployeeDetail />}></Route>
-      <Route path='/dashboard' element={
-        <PrivateRoute >
-          <Dashboard />
-        </PrivateRoute>
-      }>
-        <Route path='' element={<Home />}></Route>
-        <Route path='/dashboard/employee' element={<Employee />}></Route>
-        <Route path='/dashboard/category' element={<Category />}></Route>
-        <Route path='/dashboard/profile' element={<Profile />}></Route>
-        <Route path='/dashboard/add_category' element={<AddCategory />}></Route>
-        <Route path='/dashboard/add_employee' element={<AddEmployee />}></Route>
-        <Route path='/dashboard/edit_employee/:id' element={<EditEmployee />}></Route>
-      </Route>
-    </Routes>
+    <BrowserRouter basename="/EmployeeMS">
+      <Routes>
+
+        {/* Public Routes */}
+        <Route path='/' element={<Start />} />
+        <Route path='/adminlogin' element={<Login />} />
+        <Route path='/employee_login' element={<EmployeeLogin />} />
+        <Route path='/employee_detail/:id' element={<EmployeeDetail />} />
+
+        {/* Protected Dashboard Routes */}
+        <Route 
+          path='/dashboard' 
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        >
+          <Route index element={<Home />} />
+          <Route path='employee' element={<Employee />} />
+          <Route path='category' element={<Category />} />
+          <Route path='profile' element={<Profile />} />
+          <Route path='add_category' element={<AddCategory />} />
+          <Route path='add_employee' element={<AddEmployee />} />
+          <Route path='edit_employee/:id' element={<EditEmployee />} />
+        </Route>
+      </Routes>
     </BrowserRouter>
   )
 }

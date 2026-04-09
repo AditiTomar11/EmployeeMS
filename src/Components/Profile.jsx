@@ -1,7 +1,7 @@
 import React from "react";
 
 const Profile = ({ employee }) => {
-  // Example employee data if not passed as props
+
   const dummyEmployee = {
     name: "John Doe",
     email: "john@example.com",

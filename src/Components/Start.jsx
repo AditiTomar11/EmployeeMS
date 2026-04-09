@@ -7,7 +7,7 @@ const Start = () => {
     const navigate = useNavigate()
   axios.defaults.withCredentials = true;
   useEffect(() => {
-    axios.get('http://localhost:3000/verify')
+    axios.get('http://localhost:5000/verify')
     .then(result => {
       if(result.data.Status) {
         if(result.data.role === "admin") {
@@ -21,7 +21,7 @@ const Start = () => {
 
   return (
     <div className="loginPage d-flex flex-column justify-content-center align-items-center vh-100">
-      <h1 className="app-title" >🚀 EmployeeMS</h1>
+      <h1 className="app-title" >EmployeeMS</h1>
       <p className="tagline">Manage employees smarter & faster</p>
       <div className="p-3 rounded w-25 border loginForm">
         <h2 className="text-center">Login As</h2>

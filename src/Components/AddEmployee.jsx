@@ -17,7 +17,7 @@ const AddEmployee = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/auth/category")
+      .get("http://localhost:5000/auth/category")
       .then((result) => {
         if (result.data.Status) {
           setCategory(result.data.Result);
@@ -126,17 +126,26 @@ const AddEmployee = () => {
               }
             />
           </div>
-          <div className="col-12">
-            <label for="category" className="form-label">
-              Category
-            </label>
-            <select name="category" id="category" className="form-select"
-                onChange={(e) => setEmployee({...employee, category_id: e.target.value})}>
-              {category.map((c) => {
-                return <option value={c.id}>{c.name}</option>;
-              })}
-            </select>
-          </div>
+         <div className="col-12">
+  <label htmlFor="category" className="form-label">
+    Category
+  </label>
+  <select 
+    name="category" 
+    id="category" 
+    className="form-select"
+    value={employee.category_id} // Bind the value to state
+    onChange={(e) => setEmployee({...employee, category_id: e.target.value})}
+  >
+    {/* Add a default disabled option */}
+    <option value="" disabled>Select a Category</option> 
+    
+    {category.map((c) => {
+      {/* Don't forget the key prop! */}
+      return <option key={c.id} value={c.id}>{c.name}</option>; 
+    })}
+  </select>
+</div>
           <div className="col-12 mb-3">
             <label className="form-label" for="inputGroupFile01">
               Select Image
