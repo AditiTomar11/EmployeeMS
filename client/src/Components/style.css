@@ -1,6 +1,6 @@
 .loginPage {
-    background: url('Images/dr5.jpg');
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(5, 38, 5, 0.5)), url("Images/dr5.jpg");
+    background: url('/Images/dr5.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(5, 38, 5, 0.5)), url("/Images/dr5.jpg");
     background-position: center;
     background-repeat: no-repeat;
     background-size: 100% 120%;
