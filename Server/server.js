@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
-import "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config();
 import mongoose from "mongoose";
 import { EmployeeRouter } from "./Routes/EmployeeRoute.js"; 
 import { adminRouter } from "./Routes/AdminRoute.js";
@@ -27,7 +28,7 @@ mongoose.connect(process.env.MONGODB_URI)
 app.use("/auth", EmployeeRouter); 
 app.use("/admin", adminRouter);
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

@@ -16,7 +16,7 @@ router.post("/adminlogin", async (req, res) => {
         if (admin) {
             const token = jwt.sign(
                 { role: "admin", email: admin.email, id: admin._id },
-                "jwt_secret_key",
+                process.env.JWT_SECRET,
                 { expiresIn: "1d" }
             );
             res.cookie('token', token, { httpOnly: true, secure: false, sameSite: "lax" });
