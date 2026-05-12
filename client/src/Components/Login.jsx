@@ -16,6 +16,10 @@ const Login = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault()
+        axios.post(`${import.meta.env.VITE_API_URL}/auth/adminlogin`, 
+            values,
+             {withCredentials: true}
+        )
 
         try {
 
