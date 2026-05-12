@@ -9,21 +9,35 @@ const Login = () => {
         email: '',
         password: ''
     })
-    const [error, setError] = useState(null)
+
     const navigate = useNavigate()
-    axios.defaults.withCredentials = true;
-    const handleSubmit = (event) => {
+
+    const API_URL = import.meta.env.VITE_API_URL
+
+    const handleSubmit = async (event) => {
         event.preventDefault()
-        axios.post(`${import.meta.env.VITE_API_URL}/auth/adminlogin`, values)
-         .then(result => {
-            if(result.data.loginStatus) {
-             localStorage.setItem("valid", "true")
-             navigate('/dashboard')
+
+        try {
+
+            console.log("API URL:", API_URL)
+
+            const result = await axios.post(
+                `${API_URL}/auth/adminlogin`,
+                values,
+                { withCredentials: true }
+            )
+
+            if (result.data.loginStatus) {
+                localStorage.setItem("valid", "true")
+                navigate('/dashboard')
             } else {
                 alert(result.data.Error)
             }
-        })
-        .catch(err => console.log(err))
+
+        } catch (err) {
+            console.log(err)
+            alert("Login failed")
+        }
     }
 
     return (
