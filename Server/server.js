@@ -11,7 +11,7 @@ const app = express();
 // 1. Middleware
 // Updated CORS to allow credentials (cookies) for login
 app.use(cors({
-    origin: ["http://localhost:5173"],
+    origin: ["https://employee-ms-chi.vercel.app"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }));
