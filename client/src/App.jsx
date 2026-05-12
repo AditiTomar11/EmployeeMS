@@ -19,7 +19,7 @@ import PrivateRoute from './Components/PrivateRoute'
 
 function App() {
   return (
-    <BrowserRouter basename="/">
+    <BrowserRouter>
       <Routes>
 
         {/* Public Routes */}
