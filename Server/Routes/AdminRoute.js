@@ -1,166 +1,143 @@
 import express from "express";
-import con from "../utils/db.js";
 import jwt from "jsonwebtoken";
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
 import multer from "multer";
 import path from "path";
+import { AdminModel } from "../models/Admin.js";
+import { CategoryModel } from "../models/Category.js";
+import { EmployeeModel } from "../models/Employee.js";
 
 const router = express.Router();
 
-router.post("/adminlogin", (req, res) => {
-  const sql = "SELECT * from admin Where email = ? and password = ?";
-  con.query(sql, [req.body.email, req.body.password], (err, result) => {
-    if (err) return res.json({ loginStatus: false, Error: "Query error" });
-    if (result.length > 0) {
-      const email = result[0].email;
-      const token = jwt.sign(
-        { role: "admin", email: email, id: result[0].id },
-        "jwt_secret_key",
-        { expiresIn: "1d" }
-      );
-      res.cookie('token', token, {
-        httpOnly: true,
-                secure: false,
-                sameSite: "lax"
-            });
-      return res.json({ loginStatus: true });
-    } else {
-        return res.json({ loginStatus: false, Error:"wrong email or password" });
+// Admin Login
+router.post("/adminlogin", async (req, res) => {
+    try {
+        const admin = await AdminModel.findOne({ email: req.body.email, password: req.body.password });
+        if (admin) {
+            const token = jwt.sign(
+                { role: "admin", email: admin.email, id: admin._id },
+                "jwt_secret_key",
+                { expiresIn: "1d" }
+            );
+            res.cookie('token', token, { httpOnly: true, secure: false, sameSite: "lax" });
+            return res.json({ loginStatus: true });
+        } else {
+            return res.json({ loginStatus: false, Error: "Wrong email or password" });
+        }
+    } catch (err) {
+        return res.json({ loginStatus: false, Error: "Server Error" });
     }
-  });
 });
 
-router.get('/category', (req, res) => {
-    const sql = "SELECT * FROM category";
-    con.query(sql, (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"})
-        return res.json({Status: true, Result: result})
-    })
-})
-
-router.post('/add_category', (req, res) => {
-    const sql = "INSERT INTO category (`name`) VALUES (?)"
-    con.query(sql, [req.body.category], (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"})
-        return res.json({Status: true})
-    })
-})
-
-// image upload 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'Public/Images')
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname))
+// Category Routes
+router.get('/category', async (req, res) => {
+    try {
+        const result = await CategoryModel.find({});
+        return res.json({ Status: true, Result: result });
+    } catch (err) {
+        return res.json({ Status: false, Error: "Fetch Error" });
     }
-})
-const upload = multer({
-    storage: storage
-})
-// end imag eupload 
+});
 
-router.post('/add_employee',upload.single('image'), (req, res) => {
-    const sql = `INSERT INTO employee 
-    (name,email,password, address, salary,image, category_id) 
-    VALUES (?)`;
-    bcrypt.hash(req.body.password, 10, (err, hash) => {
-        if(err) return res.json({Status: false, Error: "Query Error"})
-        const values = [
-            req.body.name,
-            req.body.email,
-            hash,
-            req.body.address,
-            req.body.salary, 
-            req.file.filename,
-            req.body.category_id
-        ]
-        con.query(sql, [values], (err, result) => {
-            if(err) return res.json({Status: false, Error: err})
-            return res.json({Status: true})
-        })
-    })
-})
+router.post('/add_category', async (req, res) => {
+    try {
+        const newCategory = new CategoryModel({ name: req.body.category });
+        await newCategory.save();
+        return res.json({ Status: true });
+    } catch (err) {
+        return res.json({ Status: false, Error: "Save Error" });
+    }
+});
 
-router.get('/employee', (req, res) => {
-    const sql = "SELECT * FROM employee";
-    con.query(sql, (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"})
-        return res.json({Status: true, Result: result})
-    })
-})
+// Image Upload Configuration
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, 'Public/Images'),
+    filename: (req, file, cb) => cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname))
+});
+const upload = multer({ storage: storage });
 
-router.get('/employee/:id', (req, res) => {
-    const id = req.params.id;
-    const sql = "SELECT * FROM employee WHERE id = ?";
-    con.query(sql,[id], (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"})
-        return res.json({Status: true, Result: result})
-    })
-})
+// Employee Routes
+router.post('/add_employee', upload.single('image'), async (req, res) => {
+    try {
+        const hashPassword = await bcrypt.hash(req.body.password, 10);
+        const newEmployee = new EmployeeModel({
+            name: req.body.name,
+            email: req.body.email,
+            password: hashPassword,
+            address: req.body.address,
+            salary: req.body.salary,
+            image: req.file.filename,
+            category_id: req.body.category_id
+        });
+        await newEmployee.save();
+        return res.json({ Status: true });
+    } catch (err) {
+        return res.json({ Status: false, Error: "Add Employee Error" });
+    }
+});
 
-router.put('/edit_employee/:id', (req, res) => {
-    const id = req.params.id;
-    const sql = `UPDATE employee 
-        set name = ?, email = ?, salary = ?, address = ?, category_id = ? 
-        Where id = ?`
-    const values = [
-        req.body.name,
-        req.body.email,
-        req.body.salary,
-        req.body.address,
-        req.body.category_id
-    ]
-    con.query(sql,[...values, id], (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"+err})
-        return res.json({Status: true, Result: result})
-    })
-})
+router.get('/employee', async (req, res) => {
+    try {
+        const result = await EmployeeModel.find({});
+        return res.json({ Status: true, Result: result });
+    } catch (err) {
+        return res.json({ Status: false, Error: "Fetch Error" });
+    }
+});
 
-router.delete('/delete_employee/:id', (req, res) => {
-    const id = req.params.id;
-    const sql = "delete from employee where id = ?"
-    con.query(sql,[id], (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"+err})
-        return res.json({Status: true, Result: result})
-    })
-})
+router.get('/employee/:id', async (req, res) => {
+    try {
+        const result = await EmployeeModel.findById(req.params.id);
+        return res.json({ Status: true, Result: [result] });
+    } catch (err) {
+        return res.json({ Status: false, Error: "Fetch Error" });
+    }
+});
 
-router.get('/admin_count', (req, res) => {
-    const sql = "select count(id) as admin from admin";
-    con.query(sql, (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"+err})
-        return res.json({Status: true, Result: result})
-    })
-})
+router.put('/edit_employee/:id', async (req, res) => {
+    try {
+        await EmployeeModel.findByIdAndUpdate(req.params.id, {
+            name: req.body.name,
+            email: req.body.email,
+            salary: req.body.salary,
+            address: req.body.address,
+            category_id: req.body.category_id
+        });
+        return res.json({ Status: true });
+    } catch (err) {
+        return res.json({ Status: false, Error: "Update Error" });
+    }
+});
 
-router.get('/employee_count', (req, res) => {
-    const sql = "select count(id) as employee from employee";
-    con.query(sql, (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"+err})
-        return res.json({Status: true, Result: result})
-    })
-})
+router.delete('/delete_employee/:id', async (req, res) => {
+    try {
+        await EmployeeModel.findByIdAndDelete(req.params.id);
+        return res.json({ Status: true });
+    } catch (err) {
+        return res.json({ Status: false, Error: "Delete Error" });
+    }
+});
 
-router.get('/salary_count', (req, res) => {
-    const sql = "select sum(salary) as salaryOFEmp from employee";
-    con.query(sql, (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"+err})
-        return res.json({Status: true, Result: result})
-    })
-})
+// Dashboard Statistics
+router.get('/admin_count', async (req, res) => {
+    const count = await AdminModel.countDocuments();
+    return res.json({ Status: true, Result: [{ admin: count }] });
+});
 
-router.get('/admin_records', (req, res) => {
-    const sql = "select * from admin"
-    con.query(sql, (err, result) => {
-        if(err) return res.json({Status: false, Error: "Query Error"+err})
-        return res.json({Status: true, Result: result})
-    })
-})
+router.get('/employee_count', async (req, res) => {
+    const count = await EmployeeModel.countDocuments();
+    return res.json({ Status: true, Result: [{ employee: count }] });
+});
+
+router.get('/salary_count', async (req, res) => {
+    const result = await EmployeeModel.aggregate([{ $group: { _id: null, totalSalary: { $sum: "$salary" } } }]);
+    const total = result.length > 0 ? result[0].totalSalary : 0;
+    return res.json({ Status: true, Result: [{ salaryOFEmp: total }] });
+});
 
 router.get('/logout', (req, res) => {
-    res.clearCookie('token')
-    return res.json({Status: true})
-})
+    res.clearCookie('token');
+    return res.json({ Status: true });
+});
 
 export { router as adminRouter };
