@@ -17,7 +17,7 @@ const AddEmployee = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/auth/category")
+      .get('${import.meta.env.VITE_API_URL}/auth/category')
       .then((result) => {
         if (result.data.Status) {
           setCategory(result.data.Result);
@@ -39,7 +39,7 @@ const AddEmployee = () => {
     formData.append('image', employee.image);
     formData.append('category_id', employee.category_id);
 
-    axios.post('http://localhost:5000/auth/add_employee', formData)
+    axios.post('${import.meta.env.VITE_API_URL}auth/add_employee', formData)
     .then(result => {
         if(result.data.Status) {
             navigate('/dashboard/employee')

@@ -8,7 +8,7 @@ const Employee = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/auth/employee")
+      .get("${import.meta.env.VITE_API_URL}/auth/employee")
       .then((result) => {
         if (result.data.Status) {
           setEmployee(result.data.Result);
@@ -19,7 +19,7 @@ const Employee = () => {
       .catch((err) => console.log(err));
   }, []);
   const handleDelete = (id) => {
-    axios.delete('http://localhost:5000/auth/delete_employee/'+id)
+    axios.delete('${import.meta.env.VITE_API_URL}/auth/delete_employee/'+id)
     .then(result => {
         if(result.data.Status) {
            setEmployee(employee.filter(e => e._id !== id))
@@ -54,7 +54,7 @@ const Employee = () => {
                 <td>{e.name}</td>
                 <td>
                   <img
-                    src={`http://localhost:5000/Images/` + e.image}
+                    src={`${import.meta.env.VITE_API_URL}/Images/` + e.image}
                     className="employee_image"
                   />
                 </td>

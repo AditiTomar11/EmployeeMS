@@ -15,7 +15,7 @@ const EmployeeDashboard = () => {
     }
 
     axios
-      .get(`http://localhost:5000/employee/dashboard/${empId}`, {
+      .get(`${import.meta.env.VITE_API_URL}/employee/dashboard/${empId}`, {
         withCredentials: true,
       })
       .then((res) => {

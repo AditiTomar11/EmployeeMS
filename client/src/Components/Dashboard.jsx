@@ -9,7 +9,7 @@ const Dashboard = () => {
 
   const handleLogout = (e) => {
     e.preventDefault();
-    axios.get('http://localhost:5000/auth/logout')
+    axios.get('${import.meta.env.VITE_API_URL}/auth/logout')
       .then(result => {
         if (result.data && result.data.Status === true) {
           localStorage.removeItem("valid");

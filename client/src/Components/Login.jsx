@@ -14,7 +14,7 @@ const Login = () => {
     axios.defaults.withCredentials = true;
     const handleSubmit = (event) => {
         event.preventDefault()
-        axios.post('http://localhost:5000/auth/adminlogin', values)
+        axios.post(`${import.meta.env.VITE_API_URL}/auth/adminlogin`, values)
          .then(result => {
             if(result.data.loginStatus) {
              localStorage.setItem("valid", "true")

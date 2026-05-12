@@ -7,13 +7,13 @@ const Start = () => {
     const navigate = useNavigate()
   axios.defaults.withCredentials = true;
   useEffect(() => {
-    axios.get('http://localhost:5000/verify')
+    axios.get(`${import.meta.env.VITE_API_URL}/verify`)
     .then(result => {
       if(result.data.Status) {
         if(result.data.role === "admin") {
-          navigate('/dashboard')
+          navigate(`${import.meta.env.VITE_API_URL}/dashboard`)
         } else {
-          navigate('/employee_detail/'+result.data.id)
+          navigate(`${import.meta.env.VITE_API_URL}/employee_detail/${result.data.id}`)
         }
       }
     }).catch(err =>console.log(err))
