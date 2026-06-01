@@ -1,53 +1,53 @@
-import './App.css'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import Layout from "./components/layout/Layout";
+import Login from "./pages/auth/Login";
+import Signup from "./pages/auth/Signup";
+import Dashboard from "./pages/dashboard/Dashboard";
+import EmployeeList from "./pages/employees/EmployeeList";
+import AddEmployee from "./pages/employees/AddEmployee";
+import EditEmployee from "./pages/employees/EditEmployee";
+import DepartmentList from "./pages/departments/DepartmentList";
+import SalaryList from "./pages/salary/SalaryList";
+import AddSalary from "./pages/salary/AddSalary";
+import AttendanceList from "./pages/attendance/AttendanceList";
+import MarkAttendance from "./pages/attendance/MarkAttendance";
 
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-
-import Login from './Components/Login'
-import Dashboard from './Components/Dashboard'
-import Home from './Components/Home'
-import Employee from './Components/Employee'
-import Category from './Components/Category'
-import Profile from './Components/Profile'
-import AddCategory from './Components/AddCategory'
-import AddEmployee from './Components/AddEmployee'
-import EditEmployee from './Components/EditEmployee'
-import Start from './Components/Start'
-import EmployeeLogin from './Components/EmployeeLogin'
-import EmployeeDetail from './Components/EmployeeDetail'
-import PrivateRoute from './Components/PrivateRoute'
+const PrivateRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="loading">Loading...</div>;
+  return user ? children : <Navigate to="/login" />;
+};
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-
-        {/* Public Routes */}
-        <Route path='/' element={<Start />} />
-        <Route path='/adminlogin' element={<Login />} />
-        <Route path='/employee_login' element={<EmployeeLogin />} />
-        <Route path='/employee_detail/:id' element={<EmployeeDetail />} />
-
-        {/* Protected Dashboard Routes */}
-        <Route 
-          path='/dashboard' 
-          element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          }
-        >
-          <Route index element={<Home />} />
-          <Route path='employee' element={<Employee />} />
-          <Route path='category' element={<Category />} />
-          <Route path='profile' element={<Profile />} />
-          <Route path='add_category' element={<AddCategory />} />
-          <Route path='add_employee' element={<AddEmployee />} />
-          <Route path='edit_employee/:id' element={<EditEmployee />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  )
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <Layout />
+              </PrivateRoute>
+            }
+          >
+            <Route index element={<Dashboard />} />
+            <Route path="employees" element={<EmployeeList />} />
+            <Route path="employees/add" element={<AddEmployee />} />
+            <Route path="employees/edit/:id" element={<EditEmployee />} />
+            <Route path="departments" element={<DepartmentList />} />
+            <Route path="salary" element={<SalaryList />} />
+            <Route path="salary/add" element={<AddSalary />} />
+            <Route path="attendance" element={<AttendanceList />} />
+            <Route path="attendance/mark" element={<MarkAttendance />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
