@@ -7,11 +7,11 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import EmployeeList from "./pages/employees/EmployeeList";
 import AddEmployee from "./pages/employees/AddEmployee";
 import EditEmployee from "./pages/employees/EditEmployee";
-import DepartmentList from "./pages/departments/DepartmentList";
-import SalaryList from "./pages/salary/SalaryList";
-import AddSalary from "./pages/salary/AddSalary";
-import AttendanceList from "./pages/attendance/AttendanceList";
-import MarkAttendance from "./pages/attendance/MarkAttendance";
+import DepartmentList from  "./pages/departments/DepartmentList";
+import SalaryList from  "./pages/salary/SalaryList";
+import AddSalary from  "./pages/salary/AddSalary";
+import AttendanceList from  "./pages/attendance/AttendanceList";
+import MarkAttendance from  "./pages/attendance/MarkAttendance";
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
